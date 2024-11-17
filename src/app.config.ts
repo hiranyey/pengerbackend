@@ -18,6 +18,13 @@ export default config({
     },
 
     initializeExpress: (app) => {
+        app.use((req, res, next) => {
+            res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins
+            res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE'); // Allowed methods
+            res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type'); // Allowed headers
+            res.setHeader('Access-Control-Allow-Credentials', true); // Allow credentials
+            next();
+        });
         /**
          * Bind your custom express routes here:
          * Read more: https://expressjs.com/en/starter/basic-routing.html
