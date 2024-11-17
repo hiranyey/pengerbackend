@@ -12,6 +12,14 @@ import { listen } from "@colyseus/tools";
 
 // Import Colyseus config
 import app from "./app.config";
+import { matchMaker } from "@colyseus/core";
 
+matchMaker.controller.getCorsHeaders = function(req) {
+    return {
+        'Access-Control-Allow-Origin': '*',
+        'Vary': '*',
+        // 'Vary': "<header-name>, <header-name>, ...",
+    }
+}
 // Create and listen on 2567 (or PORT environment variable.)
 listen(app);
