@@ -4,11 +4,26 @@ import { MyRoomState } from "./schema/MyRoomState";
 export class MyRoom extends Room<MyRoomState> {
   maxClients = 4;
 
+  count = 0;
   onCreate(options: any) {
     this.setState(new MyRoomState());
-
+    let count = 0;
+    let scene = ["toolselect", "game"];
+    let currentScene = 0;
     this.onMessage("*", (currenClient, type, message) => {
-      console.log("received message from", currenClient.sessionId, ":", type);
+      if(type=="addObstacle" || type=="startGame"){
+        count++;
+        if(count==this.clients.length){
+          this.lock();
+          this.broadcast("*", {
+            message: scene[currentScene],
+            type: "sceneChange"
+          });
+          count=0;
+          currentScene = (currentScene+1)%scene.length;
+        }
+      }
+
       this.broadcast("*", {
         message: message,
         sender: currenClient.sessionId,
@@ -83,5 +98,4 @@ export class MyRoom extends Room<MyRoomState> {
   onDispose() {
     console.log("room", this.roomId, "disposing...");
   }
-
 }
