@@ -7,7 +7,7 @@ export class MyRoom extends Room<MyRoomState> {
   onCreate(options: any) {
     this.setState(new MyRoomState());
     let count = 0;
-    let scene = ["toolselect", "game","leaderboard"];
+    let scene = ["game","leaderboard"];
     let currentScene = 0;
     let gameStartTime: number;
 
@@ -20,7 +20,7 @@ export class MyRoom extends Room<MyRoomState> {
         let timeinSeconds = (gameEndTime - gameStartTime) / 1000;
         this.state.players[currenClient.sessionId].time = [...this.state.players[currenClient.sessionId].time || [], timeinSeconds];
       }
-      if (type == "addObstacle" || type == "startGame" || type == "end") {
+      if (type == "startGame" || type == "end") {
         count++;
         if (count == this.clients.length) {
           this.lock();
