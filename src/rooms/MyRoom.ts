@@ -4,23 +4,36 @@ import { MyRoomState } from "./schema/MyRoomState";
 export class MyRoom extends Room<MyRoomState> {
   maxClients = 4;
 
-  count = 0;
   onCreate(options: any) {
     this.setState(new MyRoomState());
     let count = 0;
-    let scene = ["toolselect", "game"];
+    let scene = ["toolselect", "game","leaderboard"];
     let currentScene = 0;
+    let gameStartTime: number;
+
     this.onMessage("*", (currenClient, type, message) => {
-      if(type=="addObstacle" || type=="startGame"|| type =="end"){
+      if (type == "death") {
+        this.state.players[currenClient.sessionId].death = (this.state.players[currenClient.sessionId].death || 0) + 1;
+      }
+      if (type == "end") {
+        let gameEndTime = new Date().getTime();
+        let timeinSeconds = (gameEndTime - gameStartTime) / 1000;
+        this.state.players[currenClient.sessionId].time = [...this.state.players[currenClient.sessionId].time || [], timeinSeconds];
+      }
+      if (type == "addObstacle" || type == "startGame" || type == "end") {
         count++;
-        if(count==this.clients.length){
+        if (count == this.clients.length) {
           this.lock();
           this.broadcast("*", {
             message: scene[currentScene],
-            type: "sceneChange"
+            type: "sceneChange",
+            state: this.state.players
           });
-          count=0;
-          currentScene = (currentScene+1)%scene.length;
+          count = 0;
+          if (type == "startGame") {
+            gameStartTime = new Date().getTime();
+          }
+          currentScene = (currentScene + 1) % scene.length;
         }
       }
 
