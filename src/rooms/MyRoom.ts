@@ -11,7 +11,7 @@ export class MyRoom extends Room<MyRoomState> {
     let scene = ["toolselect", "game"];
     let currentScene = 0;
     this.onMessage("*", (currenClient, type, message) => {
-      if(type=="addObstacle" || type=="startGame"){
+      if(type=="addObstacle" || type=="startGame"|| type =="end"){
         count++;
         if(count==this.clients.length){
           this.lock();
